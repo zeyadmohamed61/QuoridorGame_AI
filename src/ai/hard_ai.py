@@ -76,8 +76,10 @@ class HardAI(AIPlayer):
         my_path = find_shortest_path(game_state.board, player.x, player.y, player.goals)
         opp_path = find_shortest_path(game_state.board, opponent.x, opponent.y, opponent.goals)
         
+        # Primary factor: difference in shortest paths (opponent longer = better for us)
         path_diff = (opp_path - my_path) * 10
-        wall_advantage = (player.walls_remaining - opponent.walls_remaining) * 2
+        # Secondary factor: wall count advantage (having more walls = more options)
+        wall_advantage = (player.walls_remaining - opponent.walls_remaining) * 1
         
         return path_diff + wall_advantage
     
@@ -93,7 +95,7 @@ class HardAI(AIPlayer):
         # Add strategic wall placements (limited to reduce search space)
         if player.walls_remaining > 0:
             wall_moves = self._get_candidate_walls(game_state)
-            moves.extend(wall_moves[:10])  # Limit to 10 best walls
+            moves.extend(wall_moves)  # Already ranked and capped inside
         
         return moves
     
@@ -101,6 +103,10 @@ class HardAI(AIPlayer):
         walls = []
         opponent = game_state.players[1 - self.player_id]
         opp_x, opp_y = opponent.x, opponent.y
+
+        current_opp_path = find_shortest_path(
+            game_state.board, opponent.x, opponent.y, opponent.goals
+        )
         
         # Only check walls near opponent
         for dy in range(-2, 3):
@@ -121,12 +127,18 @@ class HardAI(AIPlayer):
                                 valid = False
                                 break
                         
-                        game_state.board.remove_wall(x, y, is_horizontal)
-                        
                         if valid:
-                            walls.append(AIMove(x, y, is_horizontal))
+                            new_opp_path = find_shortest_path(
+                                game_state.board, opponent.x, opponent.y, opponent.goals
+                            )
+                            path_increase = new_opp_path - current_opp_path
+                            walls.append((path_increase, AIMove(x, y, is_horizontal)))
+                        
+                        game_state.board.remove_wall(x, y, is_horizontal)
         
-        return walls
+        # Sort by how much they hurt the opponent (descending) and return top 10
+        walls.sort(key=lambda w: w[0], reverse=True)
+        return [w[1] for w in walls[:10]]
     
     def _apply_move(self, game_state, move):
         if move.type.value == "pawn":
@@ -134,16 +146,21 @@ class HardAI(AIPlayer):
             move.old_x = player.x
             move.old_y = player.y
             player.move(move.x, move.y)
+            # Check and record winner without ending the search
+            move.prev_winner = game_state.winner
+            if player.has_won():
+                game_state.winner = player.player_id
         else:  # wall
             game_state.board.place_wall(move.x, move.y, move.is_horizontal)
             game_state.get_current_player().place_wall()
+            move.prev_winner = game_state.winner
         
-        # Switch turn (simplified)
-        game_state.switch_turn()
+        # Switch turn directly to avoid clearing redo_stack (which corrupts state)
+        game_state.current_player_idx = 1 - game_state.current_player_idx
     
     def _undo_move(self, game_state, move):
-        # Switch turn back
-        game_state.switch_turn()
+        # Switch turn back directly
+        game_state.current_player_idx = 1 - game_state.current_player_idx
         
         if move.type.value == "pawn":
             player = game_state.get_current_player()
@@ -151,3 +168,6 @@ class HardAI(AIPlayer):
         else:  # wall
             game_state.board.remove_wall(move.x, move.y, move.is_horizontal)
             game_state.get_current_player().undo_place_wall()
+        
+        # Restore winner state
+        game_state.winner = move.prev_winner

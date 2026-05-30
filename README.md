@@ -9,7 +9,7 @@ A complete implementation of the **Quoridor** board game built with Python and P
 |---|------------------------|------------|
 | 1 | Mohamed Ibrahim El-Noby Mohamed |2300625|
 | 2 | Zeyad Mohamed Abdelhamid Rabah |2300707|
-| 3 | Omar Mohamed Ibrahim Mohmamed Hegab |2300110|
+| 3 | Omar Mohamed Ibrahim Mohamed Hegab |2300110|
 
 ---
 ## Game Description

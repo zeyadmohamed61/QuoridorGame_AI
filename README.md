@@ -24,6 +24,8 @@ The first player to reach any square on the opposite side wins.
 
 ### Human vs AI Gameplay
 ![Gameplay](screenshots/Human_vs_AI.png)
+![A player wins](
+screenshots/PlayerWins.png)
 
 ### Valid Move Highlights
 ![Valid Moves](screenshots/Valid_moves.png)

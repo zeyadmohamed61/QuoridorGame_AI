@@ -160,7 +160,7 @@ QuoridorGame_AI/
 
 ## Demo Video
 
-▶️ [Watch the demo video here](https://YOUR_DEMO_VIDEO_LINK)
+▶️ [Watch the demo video here](https://www.youtube.com/watch?v=hGpYN4OBhuU)
 
 ---
 

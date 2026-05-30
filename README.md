@@ -3,7 +3,15 @@
 A complete implementation of the **Quoridor** board game built with Python and Pygame, featuring a nigh mode UI, three AI difficulty levels, and intuitive mouse-based controls.
 > CSE471s: Artificial Intelligence — Spring 2026 Project
 ---
+## 👥 Team Members
+ 
+| # | Name                   | Student ID |
+|---|------------------------|------------|
+| 1 | Mohamed Ibrahim El-Noby Mohamed |2300625|
+| 2 | Zeyad Mohamed Abdelhamid Rabah |2300707|
+| 3 | Omar Mohamed Ibrahim Mohmamed Hegab |2300110|
 
+---
 ## Game Description
 
 Quoridor is a two-player abstract strategy board game played on a 9×9 grid. Each player starts at the center of their side of the board and must race to reach the opposite side. On each turn, a player can either **move their pawn** one square orthogonally, or **place a wall** to slow down the opponent. Walls are two squares long and cannot completely block a player's path to the goal.
